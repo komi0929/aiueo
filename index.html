@@ -120,6 +120,7 @@
         <h2 class="screen-title">📊 せいせき</h2>
       </div>
       <div class="status-container">
+        <!-- サマリーカード -->
         <div class="status-stats">
           <div class="stat-card">
             <div class="stat-icon">🐾</div>
@@ -142,8 +143,22 @@
             <div class="stat-label">さいこう</div>
           </div>
         </div>
-        <h3 class="mastery-title">ひらがな マスタリー</h3>
-        <div class="mastery-grid" id="status-grid"></div>
+
+        <!-- 全体進捗 -->
+        <div class="progress-section">
+          <h3 class="section-label">ぜんたい しんちょく</h3>
+          <div class="overall-progress" id="overall-progress"></div>
+        </div>
+
+        <!-- 行別進捗 -->
+        <h3 class="section-label">ぎょうべつ しんちょく</h3>
+        <div class="row-progress-list" id="row-progress-list"></div>
+
+        <!-- リセット -->
+        <button class="btn btn-reset" id="btn-reset">
+          <span class="btn-icon">🗑️</span>
+          <span>せいせきリセット</span>
+        </button>
       </div>
     </div>
 

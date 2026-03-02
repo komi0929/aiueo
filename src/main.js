@@ -29,7 +29,16 @@ const STORAGE_KEY = 'mamimume_data';
 function loadGameData() {
   try {
     const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return d || { xp: 0, level: 1, totalCleared: 0, streak: 0, bestStreak: 0, mastered: {} };
+    if (!d) return { xp: 0, level: 1, totalCleared: 0, streak: 0, bestStreak: 0, mastered: {} };
+    // 旧形式（mastered[char] = number）からの移行
+    if (d.mastered) {
+      for (const char in d.mastered) {
+        if (typeof d.mastered[char] === 'number') {
+          d.mastered[char] = { b: d.mastered[char], i: 0, a: 0 };
+        }
+      }
+    }
+    return d;
   } catch { return { xp: 0, level: 1, totalCleared: 0, streak: 0, bestStreak: 0, mastered: {} }; }
 }
 
@@ -92,11 +101,12 @@ const els = {
   levelBadge: document.getElementById('level-badge'),
   streakDisplay: document.getElementById('streak-display'),
   // ステータス画面
-  statusGrid: document.getElementById('status-grid'),
   statusMonster: document.getElementById('status-monster'),
   statusLevel: document.getElementById('status-level'),
   statusTotal: document.getElementById('status-total'),
   statusBestStreak: document.getElementById('status-best-streak'),
+  overallProgress: document.getElementById('overall-progress'),
+  rowProgressList: document.getElementById('row-progress-list'),
 };
 
 // ===== Screen Navigation =====
@@ -141,6 +151,9 @@ function setupMenu() {
     showScreen('status');
     renderStatusScreen();
   });
+
+  // リセットボタン
+  document.getElementById('btn-reset')?.addEventListener('click', resetGameData);
 
   // 戻るボタン
   document.getElementById('btn-back-menu').addEventListener('click', () => showScreen('menu'));
@@ -375,9 +388,11 @@ async function handleCharComplete() {
   gameData.streak++;
   if (gameData.streak > gameData.bestStreak) gameData.bestStreak = gameData.streak;
 
-  // マスタリー記録
+  // マスタリー記録（レベル別）
   const char = currentChars[currentCharIndex];
-  gameData.mastered[char] = (gameData.mastered[char] || 0) + 1;
+  if (!gameData.mastered[char]) gameData.mastered[char] = { b: 0, i: 0, a: 0 };
+  const lvKey = currentLevel === 'beginner' ? 'b' : currentLevel === 'intermediate' ? 'i' : 'a';
+  gameData.mastered[char][lvKey] = (gameData.mastered[char][lvKey] || 0) + 1;
 
   // レベルアップ判定
   const newLevel = Math.floor(gameData.xp / XP_PER_LEVEL) + 1;
@@ -461,21 +476,89 @@ function renderStatusScreen() {
   if (els.statusTotal) els.statusTotal.textContent = `${gameData.totalCleared}もじ`;
   if (els.statusBestStreak) els.statusBestStreak.textContent = `${gameData.bestStreak}れんぞく`;
 
-  // 文字マスタリーグリッド
-  if (els.statusGrid) {
-    els.statusGrid.innerHTML = '';
-    const allChars = getAllChars();
-    allChars.forEach(c => {
-      const cell = document.createElement('div');
-      cell.className = 'mastery-cell';
-      const count = gameData.mastered[c] || 0;
-      if (count >= 3) cell.classList.add('mastery-3');
-      else if (count >= 2) cell.classList.add('mastery-2');
-      else if (count >= 1) cell.classList.add('mastery-1');
-      cell.innerHTML = `<span class="mastery-char">${c}</span>`;
-      els.statusGrid.appendChild(cell);
+  // 全体進捗（レベル別クリア行数）
+  if (els.overallProgress) {
+    const levels = [
+      { key: 'b', label: '🌱 しょきゅう', cls: 'lv-beginner' },
+      { key: 'i', label: '🌿 ちゅうきゅう', cls: 'lv-intermediate' },
+      { key: 'a', label: '🌳 じょうきゅう', cls: 'lv-advanced' },
+    ];
+    const total = HIRAGANA_ROWS.length;
+    let html = '';
+    for (const lv of levels) {
+      const cleared = HIRAGANA_ROWS.filter(row =>
+        row.chars.every(c => {
+          const m = gameData.mastered[c];
+          return m && (m[lv.key] || 0) >= 1;
+        })
+      ).length;
+      const pct = Math.round((cleared / total) * 100);
+      html += `
+        <div class="overall-bar-row">
+          <span class="overall-label">${lv.label}</span>
+          <div class="overall-bar">
+            <div class="overall-bar-fill ${lv.cls}" style="width:${pct}%"></div>
+          </div>
+          <span class="overall-count">${cleared}/${total}</span>
+        </div>`;
+    }
+    els.overallProgress.innerHTML = html;
+  }
+
+  // 行別進捗
+  if (els.rowProgressList) {
+    els.rowProgressList.innerHTML = '';
+    HIRAGANA_ROWS.forEach((row, idx) => {
+      const card = document.createElement('div');
+      card.className = `row-progress-card row-color-${idx}`;
+
+      const charStates = row.chars.map(c => {
+        const m = gameData.mastered[c];
+        if (!m) return 0;
+        if ((m.a || 0) >= 1) return 3;
+        if ((m.i || 0) >= 1) return 2;
+        if ((m.b || 0) >= 1) return 1;
+        return 0;
+      });
+
+      const bAll = row.chars.every(c => { const m = gameData.mastered[c]; return m && (m.b || 0) >= 1; });
+      const iAll = row.chars.every(c => { const m = gameData.mastered[c]; return m && (m.i || 0) >= 1; });
+      const aAll = row.chars.every(c => { const m = gameData.mastered[c]; return m && (m.a || 0) >= 1; });
+
+      const badges = [
+        { done: bAll, icon: '🌱', label: 'しょ' },
+        { done: iAll, icon: '🌿', label: 'ちゅう' },
+        { done: aAll, icon: '🌳', label: 'じょう' },
+      ];
+
+      const charsHtml = row.chars.map((c, ci) => {
+        const st = charStates[ci];
+        const cls = st === 3 ? 'char-adv' : st === 2 ? 'char-int' : st === 1 ? 'char-beg' : 'char-none';
+        return `<span class="rp-char ${cls}">${c}</span>`;
+      }).join('');
+
+      const badgesHtml = badges.map(b =>
+        `<span class="rp-badge ${b.done ? 'rp-done' : ''}">${b.icon}</span>`
+      ).join('');
+
+      card.innerHTML = `
+        <div class="rp-header">
+          <span class="rp-row-name">${row.label}</span>
+          <div class="rp-badges">${badgesHtml}</div>
+        </div>
+        <div class="rp-chars">${charsHtml}</div>
+      `;
+      els.rowProgressList.appendChild(card);
     });
   }
+}
+
+// ===== リセット =====
+function resetGameData() {
+  if (!confirm('せいせきを ぜんぶ リセットしますか？')) return;
+  gameData = { xp: 0, level: 1, totalCleared: 0, streak: 0, bestStreak: 0, mastered: {} };
+  saveGameData();
+  renderStatusScreen();
 }
 
 // ===== Init =====

@@ -1000,59 +1000,168 @@ body {
   font-weight: 700;
 }
 
-.mastery-title {
+/* ===== Section Labels ===== */
+.section-label {
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-secondary);
   text-align: center;
-  margin-bottom: 12px;
+  margin: 16px 0 10px;
 }
 
-.mastery-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+.progress-section {
+  margin-bottom: 4px;
+}
+
+/* ===== Overall Progress Bars ===== */
+.overall-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.overall-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.overall-bar {
+  flex: 1;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.overall-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lv-beginner {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+.lv-intermediate {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.lv-advanced {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.overall-count {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ===== Row Progress Cards ===== */
+.row-progress-list {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+  margin-bottom: 24px;
 }
 
-.mastery-cell {
-  aspect-ratio: 1;
+.row-progress-card {
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
-  background: var(--surface);
-  border: 2px solid transparent;
+  color: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.rp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.rp-row-name {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.rp-badges {
+  display: flex;
+  gap: 4px;
+}
+
+.rp-badge {
+  font-size: 1.1rem;
+  opacity: 0.25;
+  transition: opacity 0.3s;
+}
+
+.rp-badge.rp-done {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+}
+
+.rp-chars {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rp-char {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  font-family: "Klee One", serif;
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.35);
   transition: all 0.3s ease;
 }
 
-.mastery-char {
-  font-size: 1.4rem;
-  font-weight: 900;
-  color: var(--text-muted);
-  font-family: "Klee One", serif;
+.rp-char.char-beg {
+  background: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-.mastery-1 {
-  border-color: var(--monster-blue);
-  background: rgba(59, 130, 246, 0.1);
+.rp-char.char-int {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.4);
 }
-.mastery-1 .mastery-char {
-  color: var(--monster-blue);
+
+.rp-char.char-adv {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
 }
-.mastery-2 {
-  border-color: var(--monster-yellow);
-  background: rgba(245, 158, 11, 0.1);
+
+/* ===== Reset Button ===== */
+.btn-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-top: 8px;
 }
-.mastery-2 .mastery-char {
-  color: var(--monster-yellow);
-}
-.mastery-3 {
-  border-color: var(--monster-green);
-  background: rgba(16, 185, 129, 0.15);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
-}
-.mastery-3 .mastery-char {
-  color: var(--monster-green);
+
+.btn-reset:active {
+  background: rgba(239, 68, 68, 0.3);
 }
 
 .btn-status-book {
