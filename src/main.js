@@ -19,9 +19,10 @@ const MONSTER_STAGES = [
 ];
 
 const LEVEL_TITLES = ['はじめて', 'かけだし', 'がんばりや', 'じょうず', 'めいじん', 'てんさい', 'でんせつ'];
-const XP_PER_CHAR = 3;       // 1文字クリアで獲得
+const XP_PER_CHAR = 3;       // 1文字クリアで獲得（基本値）
 const XP_PER_LEVEL = 15;     // レベルアップに必要なXP
 const COMBO_THRESHOLDS = [3, 5, 7, 10]; // コンボ演出の閾値
+const XP_LEVEL_MULT = { beginner: 1, intermediate: 2, advanced: 3 }; // レベル別XP倍率
 
 // ===== 永続データ =====
 const STORAGE_KEY = 'mamimume_data';
@@ -211,14 +212,19 @@ function renderRowGrid() {
     const btn = document.createElement('button');
     btn.className = `btn btn-row row-color-${idx}`;
 
-    // マスタリー状態チェック
-    const masteredCount = row.chars.filter(c => gameData.mastered[c]).length;
-    const allMastered = masteredCount === row.chars.length;
+    // レベル別クリア状態
+    const bAll = row.chars.every(c => { const m = gameData.mastered[c]; return m && (m.b || 0) >= 1; });
+    const iAll = row.chars.every(c => { const m = gameData.mastered[c]; return m && (m.i || 0) >= 1; });
+    const aAll = row.chars.every(c => { const m = gameData.mastered[c]; return m && (m.a || 0) >= 1; });
 
-    if (allMastered) btn.classList.add('completed');
+    if (aAll) btn.classList.add('completed');
 
-    const stars = allMastered ? '⭐' : masteredCount > 0 ? `${masteredCount}/${row.chars.length}` : '';
-    btn.innerHTML = `${row.label}<small>${row.chars.join(' ')}</small>${stars ? `<span class="row-progress">${stars}</span>` : ''}`;
+    // レベルバッジ
+    const b1 = bAll ? '<span class="row-lv-badge lv-done">🌱</span>' : '<span class="row-lv-badge">🌱</span>';
+    const b2 = iAll ? '<span class="row-lv-badge lv-done">🌿</span>' : '<span class="row-lv-badge">🌿</span>';
+    const b3 = aAll ? '<span class="row-lv-badge lv-done">🌳</span>' : '<span class="row-lv-badge">🌳</span>';
+
+    btn.innerHTML = `${row.label}<small>${row.chars.join(' ')}</small><div class="row-badges">${b1}${b2}${b3}</div>`;
 
     btn.addEventListener('click', () => {
       currentRow = row;
@@ -381,10 +387,11 @@ async function handleCharComplete() {
   if (busy) return;
   busy = true;
 
-  // XP加算
+  // XP加算（レベル別重み付け）
   comboCount++;
   gameData.totalCleared++;
-  gameData.xp += XP_PER_CHAR + Math.min(comboCount, 5); // コンボボーナス
+  const lvMult = XP_LEVEL_MULT[currentLevel] || 1;
+  gameData.xp += (XP_PER_CHAR + Math.min(comboCount, 5)) * lvMult;
   gameData.streak++;
   if (gameData.streak > gameData.bestStreak) gameData.bestStreak = gameData.streak;
 

@@ -406,11 +406,28 @@ body {
 }
 
 .btn-row.completed::after {
-  content: "✅";
+  content: "⭐";
   position: absolute;
   top: 8px;
   right: 8px;
   font-size: 1.2rem;
+}
+
+.row-badges {
+  display: flex;
+  gap: 2px;
+  margin-top: 6px;
+}
+
+.row-lv-badge {
+  font-size: 0.9rem;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.row-lv-badge.lv-done {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 /* 行カラー — モンスター色ベース */
