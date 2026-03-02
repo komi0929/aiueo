@@ -167,6 +167,23 @@ body {
   text-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
 }
 
+.credit-link {
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  text-decoration: none;
+  margin-top: 16px;
+  transition: opacity 0.3s;
+}
+
+.credit-link:hover,
+.credit-link:active {
+  opacity: 0.9;
+  color: var(--monster-purple);
+}
+
 /* モンスターキャラクター表示 */
 .menu-monsters {
   display: flex;
