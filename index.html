@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="description" content="まみむめもんすたー — モンスターを育てながらひらがなを学ぼう！" />
     <meta name="theme-color" content="#1a1033" />
+    <!-- OGP -->
+    <meta property="og:title" content="まみむめもんすたー" />
+    <meta property="og:description" content="モンスターを育てながらひらがなを学ぼう！" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/assets/ogp.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>まみむめもんすたー</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -97,7 +106,7 @@
     <!-- 練習画面 -->
     <div id="screen-practice" class="screen">
       <div class="practice-header">
-        <button class="btn btn-back btn-small" id="btn-back-select"><span>◀</span></button>
+        <button class="btn btn-back btn-small" id="btn-back-select" aria-label="もどる"><span>◀</span></button>
         <div class="progress-container" id="progress-container"></div>
         <div class="current-char-label" id="current-char-label">あ</div>
       </div>

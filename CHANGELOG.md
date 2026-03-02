@@ -1,5 +1,13 @@
 # まみむめもんすたー — 変更履歴
 
+## [1.2.1] - 2026-03-03
+
+### セキュリティ・品質改善
+
+- OGPメタタグ追加（og:title, og:description, og:image, twitter:card）
+- Favicon追加（SVG + apple-touch-icon参照）
+- アクセシビリティ: ◀ボタンにaria-label追加
+
 ## [1.2.0] - 2026-03-03
 
 ### 改善
