@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="まみむめもんすたー — モンスターを育てながらひらがなを学ぼう！" />
+    <meta name="theme-color" content="#1a1033" />
+    <title>まみむめもんすたー</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- メニュー画面 -->
+    <div id="screen-menu" class="screen active">
+      <div class="menu-container">
+        <h1 class="app-title">
+          <span class="title-char">ま</span><span class="title-char">み</span><span class="title-char">む</span><span class="title-char">め</span><span class="title-char">も</span>
+          <br /><span class="title-sub">んすたー</span>
+        </h1>
+
+        <!-- モンスター5体 -->
+        <div class="menu-monsters" id="menu-monsters">
+          <div class="monster-wrap"><span class="monster-emoji">👾</span></div>
+          <div class="monster-wrap"><span class="monster-emoji">👻</span></div>
+          <div class="monster-wrap"><span class="monster-emoji">🐙</span></div>
+          <div class="monster-wrap"><span class="monster-emoji">🦖</span></div>
+          <div class="monster-wrap"><span class="monster-emoji">😈</span></div>
+        </div>
+
+        <!-- 育成カード（コンパクト） -->
+        <div class="monster-card compact">
+          <div class="monster-card-row">
+            <div id="monster-emoji" class="monster-main-emoji">🥚</div>
+            <div class="monster-info">
+              <div class="monster-info-top">
+                <div id="monster-name" class="monster-stage-name">たまご</div>
+                <div id="level-badge" class="level-badge">Lv.1 はじめて</div>
+              </div>
+              <div class="xp-bar-container">
+                <div id="xp-bar" class="xp-bar-fill"></div>
+              </div>
+              <div id="xp-text" class="xp-text">0 / 10</div>
+            </div>
+          </div>
+          <div id="streak-display" class="streak-display"></div>
+        </div>
+
+        <div class="menu-section">
+          <div class="mode-buttons">
+            <button class="btn btn-mode" data-mode="row" id="btn-mode-row">
+              <span class="btn-icon">📖</span>
+              <span class="btn-text">ぎょうべつ<br /><small>あぎょう、かぎょう…</small></span>
+            </button>
+            <button class="btn btn-mode" data-mode="random" id="btn-mode-random">
+              <span class="btn-icon">🎲</span>
+              <span class="btn-text">ランダム<br /><small>いろんなもじ！</small></span>
+            </button>
+            <button class="btn btn-mode" data-mode="quiz" id="btn-mode-quiz">
+              <span class="btn-icon">🏆</span>
+              <span class="btn-text">クイズ<br /><small>10もん れんぞく！</small></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="menu-section">
+          <div class="level-buttons">
+            <button class="btn btn-level active" data-level="beginner" id="btn-level-beginner">
+              <span class="btn-icon">🌱</span><span>しょきゅう</span>
+            </button>
+            <button class="btn btn-level" data-level="intermediate" id="btn-level-intermediate">
+              <span class="btn-icon">🌿</span><span>ちゅうきゅう</span>
+            </button>
+            <button class="btn btn-level" data-level="advanced" id="btn-level-advanced">
+              <span class="btn-icon">🌳</span><span>じょうきゅう</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-status-book" id="btn-status">
+          <span class="btn-icon">📊</span>
+          <span>せいせき</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 行選択画面 -->
+    <div id="screen-row-select" class="screen">
+      <div class="screen-header">
+        <button class="btn btn-back" id="btn-back-menu"><span>◀ もどる</span></button>
+        <h2 class="screen-title">ぎょうをえらんでね</h2>
+      </div>
+      <div class="row-grid" id="row-grid"></div>
+    </div>
+
+    <!-- 練習画面 -->
+    <div id="screen-practice" class="screen">
+      <div class="practice-header">
+        <button class="btn btn-back btn-small" id="btn-back-select"><span>◀</span></button>
+        <div class="progress-container" id="progress-container"></div>
+        <div class="current-char-label" id="current-char-label">あ</div>
+      </div>
+      <div class="canvas-area" id="canvas-area">
+        <canvas id="guide-canvas"></canvas>
+        <canvas id="draw-canvas"></canvas>
+      </div>
+      <div class="practice-footer">
+        <button class="btn btn-clear-canvas" id="btn-clear-canvas"><span>🔄 けす</span></button>
+      </div>
+      <div class="feedback-overlay" id="feedback-overlay">
+        <div class="feedback-content" id="feedback-content"></div>
+      </div>
+    </div>
+
+    <!-- ステータス画面 -->
+    <div id="screen-status" class="screen">
+      <div class="screen-header">
+        <button class="btn btn-back" id="btn-back-menu2"><span>◀ もどる</span></button>
+        <h2 class="screen-title">📊 せいせき</h2>
+      </div>
+      <div class="status-container">
+        <div class="status-stats">
+          <div class="stat-card">
+            <div class="stat-icon">🐾</div>
+            <div class="stat-value" id="status-monster">🥚 たまご</div>
+            <div class="stat-label">もんすたー</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" id="status-level">Lv.1</div>
+            <div class="stat-label">レベル</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✏️</div>
+            <div class="stat-value" id="status-total">0もじ</div>
+            <div class="stat-label">くりあ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="status-best-streak">0れんぞく</div>
+            <div class="stat-label">さいこう</div>
+          </div>
+        </div>
+        <h3 class="mastery-title">ひらがな マスタリー</h3>
+        <div class="mastery-grid" id="status-grid"></div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
